@@ -42,17 +42,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.alarmclock.alarmset.presentation.view.BottomSheet
-import com.example.alarmclock.home.domain.utility.getAlarms
-import com.example.alarmclock.home.domain.utility.getAmOrPm
+import com.example.alarmclock.home.presentation.model.Alarm
 import com.example.alarmclock.home.domain.utility.getTwelveHourFormat
 
 @Composable
-fun HomeView(padding: PaddingValues, showClockUI: () -> Unit) {
+fun HomeView(
+    padding: PaddingValues,
+    showClockUI: () -> Unit,
+    alarms: MutableList<Alarm>
+) {
     var showDialog by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val items = remember { getAlarms().toMutableStateList() }
-    Column(modifier = Modifier.padding(padding).padding(horizontal = 12.dp, vertical = 12.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(padding)
+            .padding(12.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -123,11 +128,11 @@ fun HomeView(padding: PaddingValues, showClockUI: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             itemsIndexed(
-                items = items,
+                items = alarms,
             ) { index, item ->
                 Card(
                     modifier = Modifier.fillMaxWidth()
-                        .padding(bottom = if(items.size -1 == index) 120.dp else 0.dp),
+                        .padding(bottom = if(alarms.size -1 == index) 120.dp else 0.dp),
                     elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp, pressedElevation = 10.dp),
                     shape = RoundedCornerShape(25.dp)
                 ) {
@@ -153,14 +158,14 @@ fun HomeView(padding: PaddingValues, showClockUI: () -> Unit) {
                                 fontSize = 40.sp
                             )
                             Text(
-                                text = getAmOrPm(item.alarmTime),
+                                text = if(item.isPm) "pm" else "am",
                                 fontSize = 10.sp,
                                 modifier = Modifier.offset(y = 6.dp)
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Switch(checked = item.isActive, onCheckedChange = { switchStateChange ->
                                 Log.d("switchState", "switchStateChange ---> $switchStateChange")
-                                items[index] = item.copy(isActive = switchStateChange)
+                                alarms[index] = item.copy(isActive = switchStateChange)
                             })
                         }
                     }
