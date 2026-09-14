@@ -47,7 +47,7 @@ import com.example.alarmclock.home.domain.utility.getAmOrPm
 import com.example.alarmclock.home.domain.utility.getTwelveHourFormat
 
 @Composable
-fun HomeView(padding: PaddingValues) {
+fun HomeView(padding: PaddingValues, showClockUI: () -> Unit) {
     var showDialog by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -175,7 +175,8 @@ fun HomeView(padding: PaddingValues) {
                 .size(80.dp)
                 .align(Alignment.BottomEnd),
             onClick = {
-                showDialog = true
+                showClockUI()
+//                showDialog = true
             },
         ) {
             Icon(
