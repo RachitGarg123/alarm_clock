@@ -35,14 +35,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.alarmclock.alarmset.data.db.Alarm
 import com.example.alarmclock.alarmset.presentation.view.BottomSheet
-import com.example.alarmclock.home.presentation.model.Alarm
 import com.example.alarmclock.home.domain.utility.getTwelveHourFormat
 
 @Composable
@@ -181,7 +180,6 @@ fun HomeView(
                 .align(Alignment.BottomEnd),
             onClick = {
                 showClockUI()
-//                showDialog = true
             },
         ) {
             Icon(

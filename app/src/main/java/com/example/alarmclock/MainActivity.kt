@@ -8,6 +8,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.layout.Box
@@ -19,15 +20,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import com.example.alarmclock.alarmset.presentation.view.ClockUI
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.alarmclock.alarmset.data.db.Alarm
 import com.example.alarmclock.home.domain.utility.receiver.AlarmReceiver
-import com.example.alarmclock.home.presentation.model.Alarm
 import com.example.alarmclock.ui.theme.AlarmClockTheme
 import com.example.alarmclock.home.presentation.view.HomeView
+import com.example.alarmclock.home.presentation.viewmodel.HomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.ZoneId
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     val ALARM_BROADCAST_RECEIVER_REQUEST_CODE = 949
+
+    val viewModel: HomeViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -60,7 +68,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AlarmClockTheme {
                 var showClockUI by remember { mutableStateOf(false) }
-                val alarms = remember { mutableStateListOf<Alarm>() }
+                val alarms by viewModel.alarms.collectAsStateWithLifecycle()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     HomeView(
                         innerPadding,
@@ -82,12 +90,14 @@ class MainActivity : ComponentActivity() {
                                         (hour.toString().length == 2 && minute.toString().length == 1) -> "$hour:0$minute"
                                         else -> "0$hour:0$minute"
                                     }
-                                    alarms.add(
-                                        Alarm(
-                                            alarmTime = alarmTime,
-                                            isPm = isPm
-                                        )
+                                    val newAlarm = Alarm(
+                                        alarmTime = alarmTime,
+                                        isPm = isPm
                                     )
+                                    alarms.add(
+                                        newAlarm
+                                    )
+                                    viewModel.addAlarm(newAlarm)
                                     showClockUI = false
                                 },
                                 clockDismissed = {

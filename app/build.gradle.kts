@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.dagger.hilt)
 }
 
 android {
@@ -59,9 +60,15 @@ dependencies {
 
     // Integrating Icons
     implementation(libs.androidx.compose.material.icons.extended)
+
+    // room db
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx) // Enables Coroutines & Flow support
 
     // Kotlin Symbol Processing (KSP) Compiler
     ksp(libs.androidx.room.compiler)
+
+    // dagger-hilt
+    implementation(libs.dagger.hilt.android)
+    ksp(libs.dagger.hilt.android.compiler)
 }

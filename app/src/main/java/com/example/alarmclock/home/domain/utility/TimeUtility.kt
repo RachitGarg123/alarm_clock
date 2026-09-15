@@ -1,6 +1,5 @@
 package com.example.alarmclock.home.domain.utility
 
-import com.example.alarmclock.home.presentation.model.Alarm
 
 fun getTwelveHourFormat(alarmTime: String): String {
     val alarmHour = alarmTime.take(2).toIntOrNull() ?: return "--:--"
