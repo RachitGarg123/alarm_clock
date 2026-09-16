@@ -2,7 +2,6 @@ package com.example.alarmclock.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.alarmclock.alarmset.data.db.Alarm
 import com.example.alarmclock.alarmset.data.db.AlarmDao
 import com.example.alarmclock.alarmset.data.db.AlarmDatabase
 import dagger.Module
