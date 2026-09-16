@@ -31,6 +31,7 @@ import com.example.alarmclock.home.presentation.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -44,28 +45,7 @@ class MainActivity : ComponentActivity() {
         val alarmManager = this.getSystemService(ALARM_SERVICE) as AlarmManager
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
             val canScheduleAlarm = alarmManager.canScheduleExactAlarms()
-            if(canScheduleAlarm) {
-                val alarmIntent = Intent(this, AlarmReceiver::class.java)
-                val pendingIntent = PendingIntent.getBroadcast(
-                    this,
-                    ALARM_BROADCAST_RECEIVER_REQUEST_CODE,
-                    alarmIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-                val alarmTime = LocalDateTime.now().plusSeconds(20)
-                val triggerTime = alarmTime
-                    .atZone(ZoneId.systemDefault())
-                    .toInstant()
-                    .toEpochMilli()
-                val alarmClockInfo = AlarmManager.AlarmClockInfo(
-                    triggerTime,
-                    pendingIntent
-                )
-                alarmManager.setAlarmClock(
-                    alarmClockInfo,
-                    pendingIntent
-                )
-            } else {
+            if(!canScheduleAlarm) {
                 val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
                     data = "package:${this@MainActivity.packageName}".toUri()
                 }
@@ -106,6 +86,34 @@ class MainActivity : ComponentActivity() {
                                     )
                                     viewModel.addAlarm(newAlarm)
                                     showClockUI = false
+                                    val alarmIntent = Intent(this@MainActivity, AlarmReceiver::class.java)
+                                    val pendingIntent = PendingIntent.getBroadcast(
+                                        this@MainActivity,
+                                        ALARM_BROADCAST_RECEIVER_REQUEST_CODE,
+                                        alarmIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                                    )
+                                    val now = ZonedDateTime.now()
+                                    val todayAlarm = now.withHour(hour)
+                                        .withMinute(minute)
+                                        .withSecond(0)
+                                        .withNano(0)
+                                    val alarmTimeLocalDateTime = if(todayAlarm.isAfter(now)) {
+                                        todayAlarm
+                                    } else {
+                                        todayAlarm.plusDays(1)
+                                    }
+                                    val triggerTime = alarmTimeLocalDateTime
+                                        .toInstant()
+                                        .toEpochMilli()
+                                    val alarmClockInfo = AlarmManager.AlarmClockInfo(
+                                        triggerTime,
+                                        pendingIntent
+                                    )
+                                    alarmManager.setAlarmClock(
+                                        alarmClockInfo,
+                                        pendingIntent
+                                    )
                                 },
                                 clockDismissed = {
                                     showClockUI = false
