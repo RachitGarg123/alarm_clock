@@ -3,8 +3,10 @@ package com.example.alarmclock
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import com.example.alarmclock.alarmset.presentation.view.ClockUI
 import androidx.compose.ui.Modifier
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.alarmclock.alarmset.data.db.Alarm
 import com.example.alarmclock.home.domain.utility.receiver.AlarmReceiver
@@ -62,6 +65,11 @@ class MainActivity : ComponentActivity() {
                     alarmClockInfo,
                     pendingIntent
                 )
+            } else {
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                    data = "package:${this@MainActivity.packageName}".toUri()
+                }
+                startActivity(intent)
             }
         }
         setContent {
