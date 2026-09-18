@@ -26,7 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AlarmActivity"/>
         <receiver
             android:name=".home.domain.utility.receiver.AlarmReceiver"
             android:enabled="true"
